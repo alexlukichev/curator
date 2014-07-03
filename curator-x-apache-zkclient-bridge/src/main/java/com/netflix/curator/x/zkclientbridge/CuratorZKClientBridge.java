@@ -27,6 +27,7 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -254,4 +255,16 @@ public class CuratorZKClientBridge implements IZkConnection
 
         throw new RuntimeException(e);
     }
+
+	@Override
+	public Stat writeDataReturnStat(String path, byte[] data,
+			int expectedVersion) throws KeeperException, InterruptedException {
+		try {
+			return curator.setData().withVersion(expectedVersion).forPath(path, data);
+		} catch (Exception e) {
+			adjustException(e);
+			// never reach here
+			return null;
+		}
+	}
 }
